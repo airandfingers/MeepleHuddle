@@ -1,0 +1,48 @@
+<% include head %>
+  <div id="container">
+    <div class="span8 center inverse"> 
+      <h1>Log into your account.</h1>
+      <% if (typeof message === 'string') { %>
+        <p class="error"><%= message %></p>
+      <% } %>
+
+      <div>
+        <% if (next) { %>
+          <input type="hidden" name="next" value="<%= next %>" />
+        <% } %>
+        <a href="/register<%= next ? '?next=' + next : '' %>">
+          Don't have an account yet? Sign up here.
+        </a>
+        <br />
+      </div>
+
+      <form id="login_form" action="/login" method="post">
+        <div class="username">
+          <label>Username:</label>
+          <input id="username" name="username" type="text" placeholder="username" autofocus required />
+        </div>
+        <div class="password">
+          <label>Password:</label>
+          <input id="password" name="password" type="password" placeholder="password" required />
+        </div>
+        <div class="submit_button">
+          <input type="submit" value="Login" class="button btn btn-inverse" />
+        </div>
+        <% if (next) { %>
+          <input type="hidden" name="next" value="<%= next %>" />
+        <% } %>
+      </form>
+      <!-- Forgetting your password? <a href="/password_recovery">Click here.</a> -->
+    </div> <!--well-->
+  </div>  <!--container-->  
+
+
+<% include plugins %>
+
+<% include foot_start %>
+    <script>
+    $(function() {
+      $('#login_form').validate();
+    });
+    </script>
+<% include foot_end %>

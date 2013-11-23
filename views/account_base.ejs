@@ -1,0 +1,36 @@
+        <% if (typeof message === 'string') { %>
+          <p class="inverse"><%= message %></p>
+        <% } %>
+        <h2> Account Information</h2>
+
+        <div>
+            username: <%= username %>
+        </div>
+        <div>
+            registration date: <%= registration_date %>
+        </div>
+        <div>
+            <% if (typeof email !== 'string') { %>
+                <form id="set_email" action="/set_email" method="post">
+                    email address:
+                    <input field="text" name="email" placeholder="name@domain.com" />
+                    <button class="btn btn-inverse" value="submit"> Submit </button>
+                </form>
+            <% } else { %>
+                email address: <%= email %>
+                <br />
+                <!-- email confirmed: <%= email_confirmed %>-->
+                <form id="remove_email" action="/remove_email" method="post">
+                    <button class="btn btn-inverse" value="submit"> Remove E-mail </button>
+                </form>
+            <% } %>
+            <div id="set_email_error"></div>
+        </div>
+
+        <!--delete account -->
+        <div>
+            <h3>Delete Account</h3>
+            <form id="delete_account" action="/delete_account" method="post">
+            <button class="btn btn-inverse" value="submit">Delete</button>
+            </form>
+        </div>

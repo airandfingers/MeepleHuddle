@@ -1,0 +1,28 @@
+<% include head_start %>
+<% include head_end_and_header %>
+    <div id="container">
+        <% if (typeof user === 'undefined') { %>
+            <h1>Welcome to Board Game Pandora</h1>
+            <div id="button_groups"> 
+                <h1>Choose one:</h1>
+                <form action="/register" method="get">
+                    <button class="btn btn-success btn-large">Register</button>
+                </form>
+                <form action="/login" method="get">
+                    <button class="btn btn-success btn-large">Log In</button>
+                </form>
+            </div>
+        <% }
+
+        else { %>
+            <h1>Welcome to Board Game Pandora, <%= user.username %>!</h1>
+        <% } %>
+        
+        <% if (typeof message === 'string') { %>
+          <p><%= message %></p>
+        <% } %>
+    </div> <!-- container -->
+
+    <% include plugins %>
+
+<% include foot %>
