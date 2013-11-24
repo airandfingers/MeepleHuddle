@@ -1,5 +1,4 @@
-<% include head_start %>
-<% include head_end_and_header %>
+<% include head %>
     <div id="container">
         <%
         function rangeOrVal(val) {
@@ -35,16 +34,16 @@
                 <td><%= game.min_age || '-' %></td>
                 <td><%= rangeOrVal(game.setup_time) %></td>
                 <td><%= rangeOrVal(game.play_time) %></td>
-                <td><%= game.metrics.internal.aesthetic || '-' %></td>
-                <td><%= game.metrics.internal.challenge || '-' %></td>
-                <td><%= game.metrics.internal.pass_time || '-' %></td>
-                <td><%= game.metrics.internal.narrative || '-' %></td>
-                <td><%= game.metrics.internal.discovery || '-' %></td>
-                <td><%= game.metrics.internal.chance || '-' %></td>
-                <td><%= game.metrics.external.confrontation || '-' %></td>
-                <td><%= game.metrics.external.manipulation || '-' %></td>
-                <td><%= game.metrics.external.accumulation || '-' %></td>
-                <td><%= game.metrics.external.teamwork || '-' %></td>
+                <td><%= game.metrics.internal.aesthetic %></td>
+                <td><%= game.metrics.internal.challenge %></td>
+                <td><%= game.metrics.internal.pass_time %></td>
+                <td><%= game.metrics.internal.narrative %></td>
+                <td><%= game.metrics.internal.discovery %></td>
+                <td><%= game.metrics.internal.chance %></td>
+                <td><%= game.metrics.external.confrontation %></td>
+                <td><%= game.metrics.external.manipulation %></td>
+                <td><%= game.metrics.external.accumulation %></td>
+                <td><%= game.metrics.external.teamwork %></td>
             </tr>
         <% }); %>
         </table>

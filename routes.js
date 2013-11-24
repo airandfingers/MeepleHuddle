@@ -133,7 +133,53 @@ module.exports = (function () {
     });
   });
 
-  app.post('/set_email', function (req, res) {
+  app.get('/questionnaire', ensureAuthenticated, function(req, res) {
+    res.render('questionnaire', {
+      title: 'Questionnaire'
+    , user: req.user
+    });
+  });
+
+  app.post('/answer/:value', ensureAuthenticated, function(req, res) {
+    var val = req.params.value;
+    console.log('/answer/:value called with', val);
+    res.redirect(base_page);
+  });
+
+  app.get('/self_describe', ensureAuthenticated, function(req, res) {
+    res.render('self_describe', {
+      title: 'Describe Yourself'
+    , user: req.user
+    });
+  });
+
+  app.post('/describe', ensureAuthenticated, function(req, res) {
+    var args = req.body
+      , metrics = req.user.metrics;
+    console.log('/describe called with', args, metrics);
+    _.extend(metrics.internal, {
+      aesthetic  : args.aesthetic
+    , challenge  : args.challenge
+    , pass_time  : args.pass_time
+    , narrative  : args.narrative
+    , discovery  : args.discovery
+    , chance     : args.chance
+    });
+    _.extend(metrics.external, {
+      confrontation : args.confrontation
+    , manipulation  : args.manipulation
+    , accumulation  : args.accumulation
+    , teamwork      : args.teamwork
+    });
+    metrics.length = BoardGame.calculateSumProduct(metrics);
+    metrics.length = Math.sqrt(metrics.length);
+    req.user.save(function(save_err) {
+      if (save_err) { console.error(save_err); }
+      res.redirect(base_page);
+    });
+  });
+
+  app.post('/set_email', ensureAuthenticated, function (req, res) {
     var username = req.user.username
       , email = req.body.email;
 
@@ -154,7 +200,7 @@ module.exports = (function () {
   });
 
   //delete account
-  app.post('/delete_account', function (req, res) {
+  app.post('/delete_account', ensureAuthenticated, function (req, res) {
     console.log('delete_account route fired.');
     User.remove({ _id: req.user.id }, function(err) {
       if (_.isEmpty(err)) {
@@ -260,7 +306,7 @@ module.exports = (function () {
 */
 
   //remove email from account association
-  app.post('/remove_email', function (req, res) {
+  app.post('/remove_email', ensureAuthenticated, function (req, res) {
     console.log('calling remove email route');
     User.update({ _id: req.user._id }, { $unset: { email: undefined }, $set: { email_confirmed: false } }, function(err) {
       if (err) {

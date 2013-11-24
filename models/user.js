@@ -42,6 +42,7 @@ module.exports = (function() {
       , accumulation   : Number // 1-5
       , teamwork       : Number // 1-5
       }
+    , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
   }, { minimize: false }); // set minimize to false to save empty objects
 

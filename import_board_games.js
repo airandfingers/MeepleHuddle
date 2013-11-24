@@ -12,7 +12,12 @@ var _ = require('underscore')
   _.each(data, function(row, i) {
     //console.log('row:', row);
     board_game = _.object(fields, row);
-    board_game.skills_required = board_game.skills_required.split(',');
+    if (_.isEmpty(board_game.skills_required)) {
+      board_game.skills_required = [];
+    }
+    else {
+      board_game.skills_required = board_game.skills_required.split(',');
+    }
     board_game = new BoardGame(board_game);
     if (board_game.metrics.internal.aesthetic !== null) {
       board_games.push(board_game);

@@ -5,24 +5,25 @@
              chromium.org/developers/how-tos/chrome-frame-getting-started -->
         <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
         <header>
-          <% if (! locals.hide_navbar) { %>      
+          <%
+          var pages = [
+            { text: 'HOME', href: '/', title: 'Meeple Huddle' }
+          , { text: 'GAMES', href: '/games', title: 'Board Game List' }
+          , { text: 'ANSWER', href: '/questionnaire', title: 'Questionnaire' }
+          , { text: 'DESCRIBE', href: '/self_describe', title: 'Describe Yourself' }
+          ];
+          if (! locals.hide_navbar) { %>      
             <nav class="navbar">
                 <ul>
-                    <li class="unselectable">
-                        <a href="/home"
-                            <%= title === 'Meeple Huddle' ? 'class=current_page' : '' %>
-                        >
-                            HOME
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/games"
-                            <%= title === 'Board Game List' ? 'class=current_page' : '' %>
-                        >
-                            GAMES
-                        </a>
-                    </li>
-
+                    <% pages.forEach(function(page_obj) { %>
+                      <li class="unselectable">
+                          <a href="<%= page_obj.href %>"
+                              <%= title === page_obj.title ? 'class=current_page' : '' %>
+                          >
+                              <%= page_obj.text %>
+                          </a>
+                      </li>
+                    <% }); %>
                     <!-- LOGOUT or SIGN UP dropdown Link -->
                     <li class="right unselectable">
                         <% if (locals.username) { %>

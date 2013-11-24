@@ -33,6 +33,7 @@ module.exports = (function() {
       , accumulation   : Number // 1-5
       , teamwork       : Number // 1-5
       }
+    , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
   }, { minimize: false }); // set minimize to false to save empty objects
 
@@ -46,6 +47,31 @@ module.exports = (function() {
       //}
     });
   };
+
+  BoardGameSchema.statics.calculateSumProduct = function(metrics1, metrics2) {
+    var square =  _.isUndefined(metrics2)
+      , sum_product = 0;
+    console.log('calculateSumProduct', metrics1, square);
+    _.each(metrics1, function(metrics_obj, category) {
+      if (_.isFunction(metrics_obj)) { return; }
+      _.each(metrics_obj, function(value1, metric) {
+        if (_.isFunction(value1)) { return; }
+        console.log(metric, value1);
+        if (_.isNull(value1) || value1 < 1) {
+          value1 = metrics_obj[metric] = 1;
+        }
+        value2 = square ? value1 : metrics2[category][metric];
+        sum_product += value1 * value2;
+      });
+    });
+    return sum_product;
+  };
+
+  BoardGameSchema.pre('save', function(next) {
+    var sum_product = BoardGame.calculateSumProduct(this.metrics);
+    this.metrics.length = Math.sqrt(sum_product);
+    next();
+  });
 
   // lookup and return current, complete user document
   BoardGameSchema.methods.fetch = function(cb) {

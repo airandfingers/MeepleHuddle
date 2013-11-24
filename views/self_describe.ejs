@@ -1,0 +1,73 @@
+<% include head %>
+    <div id="container">
+        <h1>Describe your game preferences</h1>
+        <form action="/describe" method="post">
+            <div>
+                <span class="span2 offset3">Aesthetics:</span>
+                <span class="slider span2"></span>
+                <input name="aesthetic" class="span1" type="text" value=<%= user.metrics.internal.aesthetic || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Challenge:</span>
+                <span class="slider span2"></span>
+                <input name="challenge" class="span1" type="text" value=<%= user.metrics.internal.challenge || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Pass Time:</span>
+                <span class="slider span2"></span>
+                <input name="pass_time" class="span1" type="text" value=<%= user.metrics.internal.pass_time || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Narrative:</span>
+                <span class="slider span2"></span>
+                <input name="narrative" class="span1" type="text" value=<%= user.metrics.internal.narrative || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Discovery:</span>
+                <span class="slider span2"></span>
+                <input name="discovery" class="span1" type="text" value=<%= user.metrics.internal.discovery || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Chance:</span>
+                <span class="slider span2"></span>
+                <input name="chance" class="span1" type="text" value=<%= user.metrics.internal.chance || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Confrontation:</span>
+                <span class="slider span2"></span>
+                <input name="confrontation" class="span1" type="text" value=<%= user.metrics.external.confrontation || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Manipulation:</span>
+                <span class="slider span2"></span>
+                <input name="manipulation" class="span1" type="text" value=<%= user.metrics.external.manipulation || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Accumulation:</span>
+                <span class="slider span2"></span>
+                <input name="accumulation" class="span1" type="text" value=<%= user.metrics.external.accumulation || 1 %> />
+            </div>
+            <div>
+                <span class="span2 offset3">Teamwork:</span>
+                <span class="slider span2"></span>
+                <input name="teamwork" class="span1" type="text" value=<%= user.metrics.external.teamwork || 1 %> />
+            </div>
+            <input type="submit" />
+        </form>
+    </div> <!-- container -->
+
+    <% include plugins %>
+    <script>
+      $('.slider').slider({
+        min: 1
+      , max: 5
+      , slide: function(e, ui) {
+          $(this).siblings('input').val(ui.value);
+        }
+      , change: function(e, ui) {
+          $(this).siblings('input').val($(this).slider('value'));
+        }
+      });
+    </script>
+
+<% include foot %>
