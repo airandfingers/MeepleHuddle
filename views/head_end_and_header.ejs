@@ -4,17 +4,28 @@
         <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you support IE 6.
              chromium.org/developers/how-tos/chrome-frame-getting-started -->
         <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
-        <header>
+        <header class="header-frontend">
           <%
           var pages = [
             { text: 'HOME', href: '/', title: 'Meeple Huddle' }
           , { text: 'GAMES', href: '/games', title: 'Board Game List' }
+          , { text: 'BROWSE', href: '/browse', title: 'Browse' }
           , { text: 'ANSWER', href: '/questionnaire', title: 'Questionnaire' }
           , { text: 'DESCRIBE', href: '/self_describe', title: 'Describe Yourself' }
           ];
           if (! locals.hide_navbar) { %>      
-            <nav class="navbar">
-                <ul>
+            <div class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" >Meeple<span><b>Huddle</b></span></a>
+                </div>
+                <div class="navbar-collapse collapse ">
+                <ul class="nav navbar-nav">
                     <% pages.forEach(function(page_obj) { %>
                       <li class="unselectable">
                           <a href="<%= page_obj.href %>"
@@ -25,6 +36,7 @@
                       </li>
                     <% }); %>
                     <!-- LOGOUT or SIGN UP dropdown Link -->
+                    <li><a href="#"><b>Subscribe! <i class="icon-hand-up"></i></b></a></li>
                     <li class="right unselectable">
                         <% if (locals.username) { %>
                           <a id="logout_trigger"href="/logout">LOGOUT</a>
@@ -88,5 +100,6 @@
                 Forgetting your password? <a href="/password_recovery">Recover it.</a>
               </div> -->
             </div>
+              </div>
           <% } %>
         </header>

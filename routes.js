@@ -147,6 +147,8 @@ module.exports = (function () {
     });
   });
 
+
+
   app.get('/questionnaire', ensureAuthenticated, function(req, res) {
     res.render('questionnaire', {
       title: 'Questionnaire'
@@ -178,6 +180,13 @@ module.exports = (function () {
     req.user.save(function(save_err) {
       if (save_err) { console.error(save_err); }
       res.redirect(base_page);
+    });
+  });
+
+  app.get('/browse', function(req, res) {
+    res.render('browse', {
+      title: 'browse'
+    , user: req.user
     });
   });
 
