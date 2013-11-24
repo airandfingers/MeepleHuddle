@@ -76,6 +76,8 @@ p {line-height: 22px}
 
 .header-frontend .navbar-default{
     background-color: #fff;
+    width: 100%;
+    min-height: 100%
 }
 
 .header-frontend .nav li a, .header-frontend .nav li.active ul.dropdown-menu li a {
