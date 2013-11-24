@@ -2,7 +2,7 @@
 <% include head_end_and_header %>
     <div id="container">
         <% if (typeof user === 'undefined') { %>
-            <h1>Welcome to Board Game Pandora</h1>
+            <h1>Welcome to Meeple Huddle</h1>
             <div id="button_groups"> 
                 <h1>Choose one:</h1>
                 <form action="/register" method="get">
@@ -15,7 +15,7 @@
         <% }
 
         else { %>
-            <h1>Welcome to Board Game Pandora, <%= user.username %>!</h1>
+            <h1>Welcome to Meeple Huddle, <%= user.username %>!</h1>
         <% } %>
         
         <% if (typeof message === 'string') { %>

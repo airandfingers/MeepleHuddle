@@ -37,7 +37,7 @@ module.exports = (function() {
       , chance         : Number // 1-5
       }
     , external: {
-      , confrontation  : Number // 1-5
+        confrontation  : Number // 1-5
       , manipulation   : Number // 1-5
       , accumulation   : Number // 1-5
       , teamwork       : Number // 1-5

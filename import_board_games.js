@@ -6,23 +6,31 @@ var _ = require('underscore')
  csv()
 .from.path(__dirname + '/board_games.csv')
 .to.array(function(data) {
-  var fields
+  var fields = data.shift()
+    , board_games = []
     , board_game;
   _.each(data, function(row, i) {
     //console.log('row:', row);
-    if (i === 0) {
-      fields = row;
-    }
-    else {
-      board_game = _.object(fields, row);
-      board_game.skills_required = board_game.skills_required.split(',');
-      board_game = new BoardGame(board_game);
-      console.log('board_game:', board_game);
+    board_game = _.object(fields, row);
+    board_game.skills_required = board_game.skills_required.split(',');
+    board_game = new BoardGame(board_game);
+    if (board_game.metrics.internal.aesthetic !== null) {
+      board_games.push(board_game);
     }
   });
-  exit();
+  async.series([
+    function DropBoardGames(acb) {
+      BoardGame.remove(acb);
+    },
+    function AddBoardGames(acb) {
+      async.each(board_games, function(board_game, inner_acb) {
+        board_game.save(inner_acb);
+      }, acb);
+    }
+  ], exit);
 });
 
-function exit() {
+function exit(err) {
+  if (err) { console.error('Error while saving:', err); }
   process.exit(0);  
 }

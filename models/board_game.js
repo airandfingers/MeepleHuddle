@@ -59,7 +59,7 @@ module.exports = (function() {
    *   a function that creates a new document
    *   has static methods and properties attached to it
    *   gets exported by this module */
-  var BoardGame = mongoose.model('BoardGame', BoardGameSchema);
+  var BoardGame = mongoose.model('board_game', BoardGameSchema);
 
   return BoardGame;
 })();

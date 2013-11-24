@@ -7,9 +7,9 @@ module.exports = (function () {
     , User = require('./models/user')
     , db_config = require('./models/db.config')
     //, mailer = require('./mailer')
-    , request = require('request');
+    , BoardGame = require('./models/board_game');
 
-  var base_page = '/welcome';
+  var base_page = '/home';
 
   // this shouldn't be necessary - should be able to use auth.ensureAuthenticated directly
   var ensureAuthenticated = function(req, res, next) {
@@ -112,10 +112,24 @@ module.exports = (function () {
     });
   });*/
 
-  app.get('/welcome', function (req, res) {
-    res.render('welcome', {
-      title: 'Board Game Pandora'
+  function renderHome(req, res) {
+    res.render('home', {
+      title: 'Meeple Huddle'
     , user: req.user
+    });
+  }
+
+  app.get('/', renderHome);
+  app.get('/home', renderHome);
+
+  app.get('/games', function (req, res) {
+    BoardGame.find(function(find_err, games) {
+      if (find_err) { return next(find_err); }
+      res.render('games', {
+        title: 'Board Game List'
+      , user: req.user
+      , games: games
+      });
     });
   });
 

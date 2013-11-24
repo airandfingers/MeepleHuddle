@@ -9,10 +9,17 @@
             <nav class="navbar">
                 <ul>
                     <li class="unselectable">
-                        <a href="/welcome"
-                            <%= title === 'Board Game Pandora' ? 'class=current_page' : '' %>
+                        <a href="/home"
+                            <%= title === 'Meeple Huddle' ? 'class=current_page' : '' %>
                         >
-                            WELCOME
+                            HOME
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/games"
+                            <%= title === 'Board Game List' ? 'class=current_page' : '' %>
+                        >
+                            GAMES
                         </a>
                     </li>
 

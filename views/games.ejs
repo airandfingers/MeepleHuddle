@@ -1,0 +1,62 @@
+<% include head_start %>
+<% include head_end_and_header %>
+    <div id="container">
+        <%
+        function rangeOrVal(val) {
+            var min = val.min
+              , max = val.max;
+            if (min) { return min + ' - ' + max; }
+            else if (max) { return max; }
+            else { return '-'; }
+        }
+        %>
+        <table id="game_list">
+            <thead>
+                <th>Name</th>
+                <th># Players</th>
+                <th>Minimum age</th>
+                <th>Setup Time</th>
+                <th>Game Length</th>
+                <th>Aesthetic</th>
+                <th>Challenge</th>
+                <th>Pass Time</th>
+                <th>Narrative</th>
+                <th>Discovery</th>
+                <th>Chance</th>
+                <th>Confrontation</th>
+                <th>Manipulation</th>
+                <th>Accumulation</th>
+                <th>Teamwork</th>
+            </thead>
+        <% games.forEach(function(game, i) { %>
+            <tr>
+                <td><%= game.name || 'ERROR: NO NAME FOUND' %></td>
+                <td><%= rangeOrVal(game.num_players) %></td>
+                <td><%= game.min_age || '-' %></td>
+                <td><%= rangeOrVal(game.setup_time) %></td>
+                <td><%= rangeOrVal(game.play_time) %></td>
+                <td><%= game.metrics.internal.aesthetic || '-' %></td>
+                <td><%= game.metrics.internal.challenge || '-' %></td>
+                <td><%= game.metrics.internal.pass_time || '-' %></td>
+                <td><%= game.metrics.internal.narrative || '-' %></td>
+                <td><%= game.metrics.internal.discovery || '-' %></td>
+                <td><%= game.metrics.internal.chance || '-' %></td>
+                <td><%= game.metrics.external.confrontation || '-' %></td>
+                <td><%= game.metrics.external.manipulation || '-' %></td>
+                <td><%= game.metrics.external.accumulation || '-' %></td>
+                <td><%= game.metrics.external.teamwork || '-' %></td>
+            </tr>
+        <% }); %>
+        </table>
+    </div> <!-- container -->
+
+    <% include plugins %>
+    <script>
+      $('#game_list').dataTable({
+        bJQueryUI: true
+      , iDisplayLength: 40
+      , bPaginate: false
+      , sDom: 't'
+      });
+    </script>
+<% include foot %>
