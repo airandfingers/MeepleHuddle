@@ -14,12 +14,12 @@
         , { label: 'Accumulation:', name: 'accumulation', value: user.metrics.external.accumulation || 1 }
         , { label: 'Teamwork:', name: 'teamwork', value: user.metrics.external.teamwork || 1 }
         ]; %>
-        <form action="/describe" method="post">
+        <form id="metrics_form" action="/describe" method="post">
             <% metrics.forEach(function(metric_obj) { %>
                 <div>
-                    <span class="span2 offset3"><%= metric_obj.label %></span>
-                    <span class="slider span2"></span>
-                    <input name="<%= metric_obj.name %>" class="span1" type="text" value=<%= metric_obj.value %> />
+                    <span class="slider_label"><%= metric_obj.label %></span>
+                    <span class="slider"></span>
+                    <input class="slider_val" name="<%= metric_obj.name %>" type="text" value=<%= metric_obj.value %> />
                 </div>
             <% }); %>
             <input type="submit" />
