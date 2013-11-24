@@ -27,6 +27,22 @@ module.exports = (function() {
   //, email_confirmed    : { type: Boolean, default: false }
   //, recovery_code      : { type: String }
   , registration_date  : { type: Date, default: Date.now }
+  , metrics: {
+      internal: {
+        aesthetic      : Number // 1-5
+      , challenge      : Number // 1-5
+      , pass_time      : Number // 1-5
+      , narrative      : Number // 1-5
+      , discovery      : Number // 1-5
+      , chance         : Number // 1-5
+      }
+    , external: {
+      , confrontation  : Number // 1-5
+      , manipulation   : Number // 1-5
+      , accumulation   : Number // 1-5
+      , teamwork       : Number // 1-5
+      }
+    }
   }, { minimize: false }); // set minimize to false to save empty objects
 
   // static methods - Model.method()

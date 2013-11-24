@@ -1,0 +1,34 @@
+{
+  "name": "MeepleHuddle",
+  "version": "0.0.0",
+  "description": "It's like Pandora, for board games!",
+  "main": "app.js",
+  "dependencies": {
+    "async": "~0.2.9",
+    "ejs": "~0.8.5",
+    "connect-flash": "~0.1.1",
+    "mongoose": "~3.6.14",
+    "request": "~2.12.0",
+    "underscore": "~1.5.2",
+    "socket.io": "~0.9.13",
+    "passport": "~0.1.17",
+    "connect": "~2.11.0",
+    "passport-local": "~0.1.6",
+    "express": "~3.4.4",
+    "session-mongoose": "~0.2.2"
+  },
+  "devDependencies": {
+    "csv": "~0.3.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/airandfingers/MeepleHuddle.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "gitHead": "f6ad6e4cd69930097020c62361f794b545ae3e50"
+}
