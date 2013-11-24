@@ -7,7 +7,8 @@ module.exports = (function() {
     , async = require('async') // flow control utility library
     , _ = require('underscore') // list utility library
 
-    , db = require('./db'); // make sure db is connected
+    , db = require('./db')
+    , BoardGame = require('./board_game'); // make sure db is connected
 
     //, mailer = require('../mailer') // used to send emails
 
@@ -170,12 +171,26 @@ module.exports = (function() {
     }
   };*/
 
-  // lookup and return current, complete user document
-  UserSchema.methods.fetch = function(cb) {
-    User.findOne({ _id: this._id }, function(err, user) {
-      //console.log('findOne returns', err, user);
-      cb(err, user);
-    });
+  // find top [num] board game recommendations for user
+  UserSchema.methods.getRecommendations = function(num, cb) {
+    var user = this;
+    BoardGame.find(function(find_err, board_games) {
+      if (find_err) { return cb(find_err); }
+      // wtf, iterating over full metrics obj doesn't work
+      var user_metrics = user.metrics
+        , board_game_metrics
+        , sum_product;
+      _.each(board_games, function(board_game) {
+        board_game_metrics = board_game.metrics;
+        sum_product = BoardGame.calculateSumProduct(user_metrics, board_game_metrics);
+        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.length, board_game_metrics.length);
+        board_game.similarity = sum_product / user_metrics.length / board_game_metrics.length;
+        //console.log(board_game.similarity);
+      });
+      board_games = _.sortBy(board_games, 'similarity');
+      //console.log('sorted board_games:', board_games);
+      cb(null, _.last(board_games, num).reverse());
+    })
   };
 
   /* the model - a fancy constructor compiled from the schema:

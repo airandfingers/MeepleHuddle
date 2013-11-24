@@ -113,10 +113,24 @@ module.exports = (function () {
   });*/
 
   function renderHome(req, res) {
-    res.render('home', {
-      title: 'Meeple Huddle'
-    , user: req.user
-    });
+    var user = req.user
+      , render_args ={
+          title: 'Meeple Huddle'
+        , user: user
+      };
+    if (user && _.isNumber(user.metrics.length)) {
+      user.getRecommendations(5, function(err, recommendations) {
+        if (err) { console.error('Error while getting recommendations:', err); }
+        render_args.recommendations = recommendations;
+        render();
+      });
+    }
+    else {
+      render();
+    }
+    function render() {
+      res.render('home', render_args);
+    }
   }
 
   app.get('/', renderHome);
@@ -141,9 +155,30 @@ module.exports = (function () {
   });
 
   app.post('/answer/:value', ensureAuthenticated, function(req, res) {
-    var val = req.params.value;
+    var val = req.params.value
+      , metrics = req.user.metrics;
     console.log('/answer/:value called with', val);
-    res.redirect(base_page);
+    _.extend(metrics.internal, {
+      aesthetic  : val
+    , challenge  : val
+    , pass_time  : val
+    , narrative  : val
+    , discovery  : val
+    , chance     : val
+    });
+    _.extend(metrics.external, {
+      confrontation : val
+    , manipulation  : val
+    , accumulation  : val
+    , teamwork      : val
+    });
+
+    metrics.length = BoardGame.calculateSumProduct(metrics);
+    metrics.length = Math.sqrt(metrics.length);
+    req.user.save(function(save_err) {
+      if (save_err) { console.error(save_err); }
+      res.redirect(base_page);
+    });
   });
 
   app.get('/self_describe', ensureAuthenticated, function(req, res) {

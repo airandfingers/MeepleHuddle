@@ -35,6 +35,7 @@ module.exports = (function() {
       }
     , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
+  , similarity         : Number //should never get saved
   }, { minimize: false }); // set minimize to false to save empty objects
 
   // static methods - Model.method()
@@ -51,12 +52,12 @@ module.exports = (function() {
   BoardGameSchema.statics.calculateSumProduct = function(metrics1, metrics2) {
     var square =  _.isUndefined(metrics2)
       , sum_product = 0;
-    console.log('calculateSumProduct', metrics1, square);
+    metrics1 = _.pick(metrics1, ['internal', 'external']);
+    if (! square) metrics2 = _.pick(metrics2, ['internal', 'external']);
     _.each(metrics1, function(metrics_obj, category) {
-      if (_.isFunction(metrics_obj)) { return; }
+      if (_.isFunction(metrics_obj) || category === 'length') { return; }
       _.each(metrics_obj, function(value1, metric) {
         if (_.isFunction(value1)) { return; }
-        console.log(metric, value1);
         if (_.isNull(value1) || value1 < 1) {
           value1 = metrics_obj[metric] = 1;
         }
@@ -64,6 +65,7 @@ module.exports = (function() {
         sum_product += value1 * value2;
       });
     });
+    //console.log('calculateSumProduct', metrics1, metrics2, square, sum_product);
     return sum_product;
   };
 

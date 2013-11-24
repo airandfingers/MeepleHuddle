@@ -2,7 +2,7 @@ module.exports = (function () {
   var User = require('./models/user')
     , passport = require('passport')
     , LocalStrategy = require('passport-local').Strategy;
-  console.log('passport version is', passport.version);
+  //console.log('passport version is', passport.version);
   //gets called whenever attempted login
   //returns user or an error message
   passport.use(new LocalStrategy(
@@ -52,6 +52,7 @@ module.exports = (function () {
   }
 
   function ensureAuthenticated(req, res, next, message) {
+    //console.log('ensureAuthenticated:', req.user, isAuthenticated(req));
     if (isAuthenticated(req)) {
       return next();
     }

@@ -19,7 +19,7 @@ var _ = require('underscore')
       board_game.skills_required = board_game.skills_required.split(',');
     }
     board_game = new BoardGame(board_game);
-    if (board_game.metrics.internal.aesthetic !== null) {
+    if (_.isNumber(board_game.metrics.internal.aesthetic)) {
       board_games.push(board_game);
     }
   });
