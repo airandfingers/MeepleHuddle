@@ -1,57 +1,27 @@
 <% include head %>
     <div id="container">
         <h1>Describe your game preferences</h1>
+        <%
+        var metrics = [
+          { label: 'Aesthetics:', name: 'aesthetic', value: user.metrics.internal.aesthetic || 1 }
+        , { label: 'Challenge:', name: 'challenge', value: user.metrics.internal.challenge || 1 }
+        , { label: 'Pass Time:', name: 'pass_time', value: user.metrics.internal.pass_time || 1 }
+        , { label: 'Narrative:', name: 'narrative', value: user.metrics.internal.narrative || 1 }
+        , { label: 'Discovery:', name: 'discovery', value: user.metrics.internal.discovery || 1 }
+        , { label: 'Chance:', name: 'chance', value: user.metrics.internal.chance || 1 }
+        , { label: 'Confrontation:', name: 'confrontation', value: user.metrics.external.confrontation || 1 }
+        , { label: 'Manipulation:', name: 'manipulation', value: user.metrics.external.manipulation || 1 }
+        , { label: 'Accumulation:', name: 'accumulation', value: user.metrics.external.accumulation || 1 }
+        , { label: 'Teamwork:', name: 'teamwork', value: user.metrics.external.teamwork || 1 }
+        ]; %>
         <form action="/describe" method="post">
-            <div>
-                <span class="span2 offset3">Aesthetics:</span>
-                <span class="slider span2"></span>
-                <input name="aesthetic" class="span1" type="text" value=<%= user.metrics.internal.aesthetic || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Challenge:</span>
-                <span class="slider span2"></span>
-                <input name="challenge" class="span1" type="text" value=<%= user.metrics.internal.challenge || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Pass Time:</span>
-                <span class="slider span2"></span>
-                <input name="pass_time" class="span1" type="text" value=<%= user.metrics.internal.pass_time || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Narrative:</span>
-                <span class="slider span2"></span>
-                <input name="narrative" class="span1" type="text" value=<%= user.metrics.internal.narrative || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Discovery:</span>
-                <span class="slider span2"></span>
-                <input name="discovery" class="span1" type="text" value=<%= user.metrics.internal.discovery || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Chance:</span>
-                <span class="slider span2"></span>
-                <input name="chance" class="span1" type="text" value=<%= user.metrics.internal.chance || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Confrontation:</span>
-                <span class="slider span2"></span>
-                <input name="confrontation" class="span1" type="text" value=<%= user.metrics.external.confrontation || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Manipulation:</span>
-                <span class="slider span2"></span>
-                <input name="manipulation" class="span1" type="text" value=<%= user.metrics.external.manipulation || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Accumulation:</span>
-                <span class="slider span2"></span>
-                <input name="accumulation" class="span1" type="text" value=<%= user.metrics.external.accumulation || 1 %> />
-            </div>
-            <div>
-                <span class="span2 offset3">Teamwork:</span>
-                <span class="slider span2"></span>
-                <input name="teamwork" class="span1" type="text" value=<%= user.metrics.external.teamwork || 1 %> />
-            </div>
+            <% metrics.forEach(function(metric_obj) { %>
+                <div>
+                    <span class="span2 offset3"><%= metric_obj.label %></span>
+                    <span class="slider span2"></span>
+                    <input name="<%= metric_obj.name %>" class="span1" type="text" value=<%= metric_obj.value %> />
+                </div>
+            <% }); %>
             <input type="submit" />
         </form>
     </div> <!-- container -->
@@ -61,6 +31,9 @@
       $('.slider').slider({
         min: 1
       , max: 5
+      , create: function(e, ui) {
+          $(this).slider('value', $(this).siblings('input').val());
+        }
       , slide: function(e, ui) {
           $(this).siblings('input').val(ui.value);
         }
