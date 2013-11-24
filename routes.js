@@ -133,6 +133,8 @@ module.exports = (function () {
     });
   });
 
+
+
   app.get('/questionnaire', ensureAuthenticated, function(req, res) {
     res.render('questionnaire', {
       title: 'Questionnaire'
@@ -144,6 +146,13 @@ module.exports = (function () {
     var val = req.params.value;
     console.log('/answer/:value called with', val);
     res.redirect(base_page);
+  });
+
+  app.get('/browse', function(req, res) {
+    res.render('browse', {
+      title: 'browse'
+    , user: req.user
+    });
   });
 
   app.get('/self_describe', ensureAuthenticated, function(req, res) {
