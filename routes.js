@@ -119,7 +119,7 @@ module.exports = (function () {
         , user: user
       };
     if (user && _.isNumber(user.metrics.len)) {
-      user.getRecommendations(5, function(err, recommendations) {
+      user.getRecommendations(4, function(err, recommendations) {
         if (err) { console.error('Error while getting recommendations:', err); }
         render_args.recommendations = recommendations;
         render();

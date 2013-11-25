@@ -178,10 +178,9 @@ module.exports = (function() {
   // find top [num] board game recommendations for user
   UserSchema.methods.getRecommendations = function(num, cb) {
     var user = this;
-    console.log({ $nin: user.games.liked, $nin: user.games.disliked });
-    BoardGame.find({
-      _id: { $nin: user.games.liked, $nin: user.games.disliked }
-    }, function(find_err, board_games) {
+    //console.log({ $nin: user.games.liked, $nin: user.games.disliked });
+    BoardGame.find(function(find_err, board_games) {
+      console.log('find returns', find_err, board_games);
       if (find_err) { return cb(find_err); }
       // wtf, iterating over full metrics obj doesn't work
       var user_metrics = user.metrics
