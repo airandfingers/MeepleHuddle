@@ -36,6 +36,7 @@ module.exports = (function() {
     , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
   , similarity         : Number //should never get saved
+  , file_name          : String // file name (path is public/img/games)
   }, { minimize: false }); // set minimize to false to save empty objects
 
   // static methods - Model.method()
