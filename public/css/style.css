@@ -1624,7 +1624,7 @@ a.btn-purchase:hover, a.btn-purchase:focus{
     display:block;
     background: url(../img/home.jpg) no-repeat;
     background-size: 100%;
-    background-position: 0% 20%;
+    background-position: 0% -400px;
     height:250px;
     width: 100%;
 }
