@@ -1620,9 +1620,27 @@ a.btn-purchase:hover, a.btn-purchase:focus{
     padding-top: 30px;
 }
 
+#image-container {
+    display:block;
+    background: url(../img/home.jpg) no-repeat;
+    background-size: 100%;
+    background-position: 0% 20%;
+    height:250px;
+    width: 100%;
+}
+
+#red_background {
+padding: 10px 15px;
+
+}
+.sell_points {
+text-align: center;
+}
+
 .gallery-container {
     margin: 0 auto 40px auto;
     position: relative;
+
     width: 100%;
 }
 
