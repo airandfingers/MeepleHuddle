@@ -43,11 +43,11 @@ module.exports = (function() {
       , accumulation   : Number // 1-5
       , teamwork       : Number // 1-5
       }
-    , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
+    , len           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
   , games: {
-      liked            : [{ type: ObjectId, ref: 'board_games' }]
-    , disliked         : [{ type: ObjectId, ref: 'board_games' }]
+      liked            : String
+    , disliked         : String
     }
   }, { minimize: false }); // set minimize to false to save empty objects
 
@@ -178,7 +178,10 @@ module.exports = (function() {
   // find top [num] board game recommendations for user
   UserSchema.methods.getRecommendations = function(num, cb) {
     var user = this;
-    BoardGame.find(function(find_err, board_games) {
+    console.log({ $nin: user.games.liked, $nin: user.games.disliked });
+    BoardGame.find({
+      _id: { $nin: user.games.liked, $nin: user.games.disliked }
+    }, function(find_err, board_games) {
       if (find_err) { return cb(find_err); }
       // wtf, iterating over full metrics obj doesn't work
       var user_metrics = user.metrics
@@ -187,8 +190,8 @@ module.exports = (function() {
       _.each(board_games, function(board_game) {
         board_game_metrics = board_game.metrics;
         sum_product = BoardGame.calculateSumProduct(user_metrics, board_game_metrics);
-        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.length, board_game_metrics.length);
-        board_game.similarity = sum_product / user_metrics.length / board_game_metrics.length;
+        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.len, board_game_metrics.len);
+        board_game.similarity = sum_product / user_metrics.len / board_game_metrics.len;
         //console.log(board_game.similarity);
       });
       board_games = _.sortBy(board_games, 'similarity');
@@ -213,8 +216,66 @@ module.exports = (function() {
       }
     }, function(find_err, results) {
       if (find_err) { return cb(find_err); }
-      console.log('liked:', results.liked, ', disliked:', results.disliked);
+      var liked_metrics = _.pluck(results.liked, 'metrics')
+        , disliked_metrics = _.pluck(results.disliked, 'metrics')
+        , user_metrics = {
+            internal: {
+              aesthetic: 3
+            , challenge: 3
+            , pass_time: 3
+            , narrative: 3
+            , discovery: 3
+            , chance: 3
+            }
+          , external: {
+              confrontation: 3
+            , manipulation: 3
+            , accumulation: 3
+            , teamwork: 3
+            }
+          };
+      // sum likes and dislikes
+      _.each(user_metrics, function(metrics_obj, category) {
+        if (_.isFunction(metrics_obj) || category === 'len') { return; }
+        _.each(metrics_obj, function(val, metric) {
+          // val starts at 3. change it per the liked/disliked games
+          _.each(liked_metrics, function(liked_metric) {
+            val += liked_metric[category][metric];
+          });
+          _.each(disliked_metrics, function(disliked_metric) {
+            val -= disliked_metric[category][metric] / 2;
+          });
+          metrics_obj[metric] = val;
+        });
+      });
+
+      // calculate raw length
+      user_metrics.len = BoardGame.calculateSumProduct(user_metrics);
+      user_metrics.len = Math.sqrt(user_metrics.len);
+      console.log('raw length is', user_metrics.len);
+
+      // divide metrics by raw length, multiply by 15
+      _.each(user_metrics, function(metrics_obj, category) {
+        if (_.isFunction(metrics_obj) || category === 'len') { return; }
+        _.each(metrics_obj, function(val, metric) {
+          val = val / user_metrics.len * 15;
+          val = Math.round(val);
+          if (val < 1) { val = 1; }
+          else if (val > 5) { val = 5; }
+          metrics_obj[metric] = val;
+        });
+      });
+      // recalculate length
+      user_metrics.len = BoardGame.calculateSumProduct(user_metrics);
+      user_metrics.len = Math.sqrt(user_metrics.len);
+      console.log('final length is', user_metrics.len);
+
+      user.metrics = user_metrics;
+
       user.games = games;
+      user.markModified('metrics');
+      user.markModified('games');
+      console.log('saving user:', user);
       user.save(cb);
     });
 
@@ -227,8 +288,8 @@ module.exports = (function() {
       _.each(board_games, function(board_game) {
         board_game_metrics = board_game.metrics;
         sum_product = BoardGame.calculateSumProduct(user_metrics, board_game_metrics);
-        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.length, board_game_metrics.length);
-        board_game.similarity = sum_product / user_metrics.length / board_game_metrics.length;
+        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.len, board_game_metrics.len);
+        board_game.similarity = sum_product / user_metrics.len / board_game_metrics.len;
         //console.log(board_game.similarity);
       });
       board_games = _.sortBy(board_games, 'similarity');

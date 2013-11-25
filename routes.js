@@ -118,7 +118,7 @@ module.exports = (function () {
           title: 'Meeple Huddle'
         , user: user
       };
-    if (user && _.isNumber(user.metrics.length)) {
+    if (user && _.isNumber(user.metrics.len)) {
       user.getRecommendations(5, function(err, recommendations) {
         if (err) { console.error('Error while getting recommendations:', err); }
         render_args.recommendations = recommendations;
@@ -173,8 +173,8 @@ module.exports = (function () {
     , teamwork      : val
     });
 
-    metrics.length = BoardGame.calculateSumProduct(metrics);
-    metrics.length = Math.sqrt(metrics.length);
+    metrics.len = BoardGame.calculateSumProduct(metrics);
+    metrics.len = Math.sqrt(metrics.len);
     req.user.save(function(save_err) {
       if (save_err) { console.error(save_err); }
       res.redirect(base_page);
@@ -221,6 +221,8 @@ module.exports = (function () {
 
   app.post('/submit_votes', ensureAuthenticated, function(req, res) {
     console.log('submit_votes called with', req.body);
+    if (! _.isArray(req.body.liked)) { req.body.liked = []; }
+    if (! _.isArray(req.body.disliked)) { req.body.disliked = []; }
     req.user.setMetricsFromGames(req.body, function(err) {
       if (err) { console.error('setMetricsFromGames error:', err); }
       res.redirect(base_page);
@@ -252,8 +254,8 @@ module.exports = (function () {
     , accumulation  : args.accumulation
     , teamwork      : args.teamwork
     });
-    metrics.length = BoardGame.calculateSumProduct(metrics);
-    metrics.length = Math.sqrt(metrics.length);
+    metrics.len = BoardGame.calculateSumProduct(metrics);
+    metrics.len = Math.sqrt(metrics.len);
     req.user.save(function(save_err) {
       if (save_err) { console.error(save_err); }
       res.redirect(base_page);

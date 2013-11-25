@@ -57,6 +57,7 @@
             , disliked: _.map($disliked, function(item) { return $(item).data('game_id'); })
             }).complete(function(response, type) {
               console.log('/submit_votes returns', response, type);
+              window.location.href = '/';
             });
           });
         })(jQuery);

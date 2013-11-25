@@ -1,5 +1,5 @@
 <% include head %>
-    <div id="container">
+    <div class="container">
         <h1>Welcome to Meeple Huddle</h1>
         <% if (typeof user === 'undefined') { %>
             <div>
@@ -11,9 +11,18 @@
         else if (typeof recommendations !== 'undefined') { %>
             <div>
                 <h2>Here are some games you may like:</h2>
-                <% recommendations.forEach(function(board_game) { %>
-                  <div><%= board_game.name %></div>
+                <div class="gallery-container">
+                    <div id="gallery" class="col-5">
+                <% recommendations.forEach(function(game) { %>
+                  <div class="element item view view-tenth" data-zlname="reverse-effect">
+                      <img src="/img/games/<%= game.file_name %>" alt="<%= game.name %>" />
+                      <div class="mask">
+                          <h2><%= game.name %> </h2>
+                      </div>
+                  </div>
                 <% }); %>
+                    </div>
+                </div>
             </div>
         <% }
         else { %>
