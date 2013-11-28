@@ -88,6 +88,14 @@ html {
     background-color: #cccccc;
 }
 
+.item.like {
+    border: 2px solid chartreuse;
+}
+
+.item.dislike {
+    border: 2px solid red;
+}
+
 /* ==========================================================================
    Helper classes
    ========================================================================== */

@@ -33,9 +33,10 @@ module.exports = (function() {
       , accumulation   : Number // 1-5
       , teamwork       : Number // 1-5
       }
-    , length           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
+    , len           : Number // sqrt(SUMPRODUCT(all metrics, all metrics))
     }
   , similarity         : Number //should never get saved
+  , file_name          : String // file name (path is public/img/games)
   }, { minimize: false }); // set minimize to false to save empty objects
 
   // static methods - Model.method()
@@ -55,7 +56,7 @@ module.exports = (function() {
     metrics1 = _.pick(metrics1, ['internal', 'external']);
     if (! square) metrics2 = _.pick(metrics2, ['internal', 'external']);
     _.each(metrics1, function(metrics_obj, category) {
-      if (_.isFunction(metrics_obj) || category === 'length') { return; }
+      if (_.isFunction(metrics_obj) || category === 'len') { return; }
       _.each(metrics_obj, function(value1, metric) {
         if (_.isFunction(value1)) { return; }
         if (_.isNull(value1) || value1 < 1) {
@@ -71,7 +72,7 @@ module.exports = (function() {
 
   BoardGameSchema.pre('save', function(next) {
     var sum_product = BoardGame.calculateSumProduct(this.metrics);
-    this.metrics.length = Math.sqrt(sum_product);
+    this.metrics.len = Math.sqrt(sum_product);
     next();
   });
 

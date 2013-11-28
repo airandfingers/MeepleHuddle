@@ -1,6 +1,5 @@
 <% include head %>
-    <div id="container">
-
+    <div class="container">
         <% if (typeof user === 'undefined') { %>
             <div>
  <div>
@@ -20,21 +19,30 @@
         <li><a>2. A game recommendation system based on your persionality and game preferences</a></li>
         <li><a>3. A game rental service that let you try before you buy</h5>  </a>
         </ul>
-        </div>    
+        </div>
         <% }
         else if (typeof recommendations !== 'undefined') { %>
             <div>
                 <h2>Here are some games you may like:</h2>
-                <% recommendations.forEach(function(board_game) { %>
-                  <div><%= board_game.name %></div>
+                <div class="gallery-container">
+                    <div id="gallery" class="col-4">
+                <% recommendations.forEach(function(game) { %>
+                  <div class="element item view view-tenth" data-zlname="reverse-effect">
+                      <img src="/img/games/<%= game.file_name %>" alt="<%= game.name %>" />
+                      <div class="mask">
+                          <h2><%= game.name %> </h2>
+                      </div>
+                  </div>
                 <% }); %>
+                    </div>
+                </div>
             </div>
         <% }
         else { %>
             <div>
                 <h2>Choose a way to define your game preferences:</h2>
-                <a href="/questionnaire" class="btn btn-warning">Answer some questions</a>
-                <a href="/self_describe" class="btn btn-info">Describe yourself</a>
+                <a href="/judge" class="btn btn-warning">By games</a>
+                <a href="/self_describe" class="btn btn-info">By questions</a>
             </div>
         <% } %>
         

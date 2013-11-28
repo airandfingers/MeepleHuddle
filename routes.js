@@ -118,8 +118,8 @@ module.exports = (function () {
           title: 'Meeple Huddle'
         , user: user
       };
-    if (user && _.isNumber(user.metrics.length)) {
-      user.getRecommendations(5, function(err, recommendations) {
+    if (user && _.isNumber(user.metrics.len)) {
+      user.getRecommendations(4, function(err, recommendations) {
         if (err) { console.error('Error while getting recommendations:', err); }
         render_args.recommendations = recommendations;
         render();
@@ -147,8 +147,6 @@ module.exports = (function () {
     });
   });
 
-
-
   app.get('/questionnaire', ensureAuthenticated, function(req, res) {
     res.render('questionnaire', {
       title: 'Questionnaire'
@@ -175,18 +173,59 @@ module.exports = (function () {
     , teamwork      : val
     });
 
-    metrics.length = BoardGame.calculateSumProduct(metrics);
-    metrics.length = Math.sqrt(metrics.length);
+    metrics.len = BoardGame.calculateSumProduct(metrics);
+    metrics.len = Math.sqrt(metrics.len);
     req.user.save(function(save_err) {
       if (save_err) { console.error(save_err); }
       res.redirect(base_page);
     });
   });
 
-  app.get('/browse', function(req, res) {
-    res.render('browse', {
-      title: 'browse'
-    , user: req.user
+  var game_names_to_judge = [
+    'Dungeons and Dragons'
+  , 'Magic: The Gathering'
+  , 'Monopoly'
+  , 'Munchkin'
+  , 'Ticket to Ride'
+  , 'Settlers of Catan'
+  , 'Pandemic'
+  , 'Chess'
+  , 'Apples to Apples'
+  , 'Mafia'
+  , 'Dominion'
+  , '7 Wonders'
+  , 'Risk'
+  , 'Cranium'
+  , 'Agricola'
+  , 'Small World'
+  ], games_to_judge;
+  app.get('/judge', ensureAuthenticated, function(req, res) {
+    if (_.isEmpty(games_to_judge)) {
+      BoardGame.find({ name: { $in: game_names_to_judge } }, function(find_err, games) {
+        if (find_err) { console.error('Error while looking up games to judge:', find_err); }
+        games_to_judge = games;
+        render();
+      });
+    }
+    else {
+      render();
+    }
+    function render() {
+      res.render('judge', {
+        title: 'Do You Like These Games?'
+      , user: req.user
+      , games: games_to_judge
+      });
+    }
+  });
+
+  app.post('/submit_votes', ensureAuthenticated, function(req, res) {
+    console.log('submit_votes called with', req.body);
+    if (! _.isArray(req.body.liked)) { req.body.liked = []; }
+    if (! _.isArray(req.body.disliked)) { req.body.disliked = []; }
+    req.user.setMetricsFromGames(req.body, function(err) {
+      if (err) { console.error('setMetricsFromGames error:', err); }
+      res.redirect(base_page);
     });
   });
 
@@ -215,8 +254,8 @@ module.exports = (function () {
     , accumulation  : args.accumulation
     , teamwork      : args.teamwork
     });
-    metrics.length = BoardGame.calculateSumProduct(metrics);
-    metrics.length = Math.sqrt(metrics.length);
+    metrics.len = BoardGame.calculateSumProduct(metrics);
+    metrics.len = Math.sqrt(metrics.len);
     req.user.save(function(save_err) {
       if (save_err) { console.error(save_err); }
       res.redirect(base_page);

@@ -1,0 +1,65 @@
+<% include head %>
+    <!--container start-->
+    <div class="container">
+        <h2>Like or Dislike at least 5 games to set up your preferences.</h2>
+        <!--portfolio start-->
+        <div class="gallery-container">
+            <div id="gallery" class="col-4">
+                <% games.forEach(function(game) { %>
+                  <div class="element item view view-tenth" data-zlname="reverse-effect" data-game_id="<%= game._id %>">
+                      <img src="/img/games/<%= game.file_name %>" alt="<%= game.name %>" />
+                      <div class="mask">
+                          <h2><%= game.name %> </h2>
+                          <a class="thumbs-up" data-zl-popup="link" href="javascript:;">
+                              <i class="icon-thumbs-up"></i>
+                          </a>
+                          <a class="thumbs-down" data-zl-popup="link2" href="javascript:;">
+                              <i class="icon-thumbs-down"></i>
+                          </a>
+                      </div>
+                  </div>
+                <% }); %>
+            </div>
+            <button id="submit_votes" class="btn btn-success btn-large" disabled="disabled">Submit</button>
+        </div>
+        <!--portfolio end-->
+    </div>
+    <!--container end-->
+    <% include plugins %>
+    <script>
+        (function($) {
+          var num_votes = 0;
+          $('.thumbs-up').click(function(e) {
+            var $item = $(this).closest('.item');
+            setItemVoteClass($item, 'like');
+          });
+          $('.thumbs-down').click(function(e) {
+            var $item = $(this).closest('.item');
+            setItemVoteClass($item, 'dislike');
+          });
+          function setItemVoteClass($item, likeOrDislike) {
+            var other_class = likeOrDislike === 'like' ? 'dislike' : 'like';
+            $item.addClass(likeOrDislike);
+            $item.removeClass(other_class);
+            num_votes = $('.like, .dislike').length;
+            if (num_votes >= 5) {
+              $('#submit_votes').removeAttr('disabled');
+            }
+            else {
+              $('#submit_votes').attr('disabled', 'disabled');
+            }
+          }
+          $('#submit_votes').click(function(e) {
+            var $liked = $('.like')
+              , $disliked = $('.dislike');
+            $.post('/submit_votes', {
+              liked: _.map($liked, function(item) { return $(item).data('game_id'); })
+            , disliked: _.map($disliked, function(item) { return $(item).data('game_id'); })
+            }).complete(function(response, type) {
+              console.log('/submit_votes returns', response, type);
+              window.location.href = '/';
+            });
+          });
+        })(jQuery);
+    </script>
+<% include foot %>
