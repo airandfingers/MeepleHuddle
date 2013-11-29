@@ -138,6 +138,7 @@ module.exports = (function () {
 
   app.get('/games', function (req, res) {
     BoardGame.find(function(find_err, games) {
+      console.log('BoardGame.find returns', find_err, games);
       if (find_err) { return next(find_err); }
       res.render('games', {
         title: 'Board Game List'
