@@ -144,6 +144,7 @@ module.exports = (function () {
         title: 'Board Game List'
       , user: req.user
       , games: games
+      , games_msg: 'BoardGame.find returns' + find_err + games
       });
     });
   });
