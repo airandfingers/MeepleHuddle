@@ -6,8 +6,6 @@
 
   var url = 'mongodb://' + db_config.DB_HOST + ':' + db_config.DB_PORT + '/' + db_config.DB_NAME
     , credentials = { user: db_config.DB_USER, pass: db_config.DB_PASSWORD };
-  console.log('url:', url);
-  console.log('credentials:', credentials);
   mongoose.connect(url, credentials);
   mongoose.connection.on('error', function(err) { console.error(err); });
 

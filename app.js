@@ -19,7 +19,7 @@ var express = require('express')
       + '\033[' + color + 'm' + res.statusCode
       + ' \033[90m'
       + (new Date - req._startTime)
-      + 'ms meow\033[0m';
+      + 'ms\033[0m';
 
 // Create an Express app and an HTTP server
   }, app = module.exports = express()
