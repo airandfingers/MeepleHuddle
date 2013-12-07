@@ -70,6 +70,99 @@ module.exports = (function() {
     return sum_product;
   };
 
+  BoardGameSchema.statics.getRecommendations = function(metrics, num, excluded_games, cb) {
+    //console.log('getRecommendations called with', metrics, num, excluded_games);
+    BoardGame.find({ _id: { $nin : excluded_games } }, function(find_err, board_games) {
+      //console.log('find returns', find_err, board_games);
+      if (find_err) { return cb(find_err); }
+      var board_game_metrics
+        , sum_product;
+      _.each(board_games, function(board_game) {
+        board_game_metrics = board_game.metrics;
+        sum_product = BoardGame.calculateSumProduct(metrics, board_game_metrics);
+        //console.log('Setting', board_game.name, '\'s similarity', sum_product, metrics.len, board_game_metrics.len);
+        board_game.similarity = sum_product / metrics.len / board_game_metrics.len;
+        //console.log(board_game.similarity);
+      });
+      board_games = _.sortBy(board_games, 'similarity');
+      //console.log('sorted board_games:', board_games);
+      cb(null, _.last(board_games, num).reverse());
+    });
+  };
+
+  // calculate metrics based on games' metrics
+  BoardGameSchema.statics.calculateMetricsFromGames = function(games, cb) {
+    if (! _.isArray(games.liked) || ! _.isArray(games.disliked)) {
+      return cb('Non-array given to calculateMetricsFromGames', games);
+    }
+
+    async.parallel({
+      liked: function(acb) {
+        BoardGame.find({ _id: { $in: games.liked } }, acb );
+      },
+      disliked: function(acb) {
+        BoardGame.find({ _id: { $in: games.disliked } }, acb );
+      }
+    }, function(find_err, results) {
+      if (find_err) { return cb(find_err); }
+      var liked_metrics = _.pluck(results.liked, 'metrics')
+        , disliked_metrics = _.pluck(results.disliked, 'metrics')
+        , metrics = {
+            internal: {
+              aesthetic: 3
+            , challenge: 3
+            , pass_time: 3
+            , narrative: 3
+            , discovery: 3
+            , chance: 3
+            }
+          , external: {
+              confrontation: 3
+            , manipulation: 3
+            , accumulation: 3
+            , teamwork: 3
+            }
+          };
+      // sum likes and dislikes
+      _.each(metrics, function(metrics_obj, category) {
+        if (_.isFunction(metrics_obj) || category === 'len') { return; }
+        _.each(metrics_obj, function(val, metric) {
+          // val starts at 3. change it per the liked/disliked games
+          _.each(liked_metrics, function(liked_metric) {
+            val += liked_metric[category][metric];
+          });
+          _.each(disliked_metrics, function(disliked_metric) {
+            val -= disliked_metric[category][metric] / 2;
+          });
+          metrics_obj[metric] = val;
+        });
+      });
+
+      // calculate raw length
+      metrics.len = BoardGame.calculateSumProduct(metrics);
+      metrics.len = Math.sqrt(metrics.len);
+      console.log('raw length is', metrics.len);
+
+      // divide metrics by raw length, multiply by 15
+      _.each(metrics, function(metrics_obj, category) {
+        if (_.isFunction(metrics_obj) || category === 'len') { return; }
+        _.each(metrics_obj, function(val, metric) {
+          val = val / metrics.len * 15;
+          val = Math.round(val);
+          if (val < 1) { val = 1; }
+          else if (val > 5) { val = 5; }
+          metrics_obj[metric] = val;
+        });
+      });
+      // recalculate length
+      metrics.len = BoardGame.calculateSumProduct(metrics);
+      metrics.len = Math.sqrt(metrics.len);
+      console.log('final length is', metrics.len);
+
+      cb(null, metrics);
+    });
+  };
+
   BoardGameSchema.pre('save', function(next) {
     var sum_product = BoardGame.calculateSumProduct(this.metrics);
     this.metrics.len = Math.sqrt(sum_product);

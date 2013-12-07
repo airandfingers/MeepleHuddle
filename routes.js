@@ -3,8 +3,8 @@ module.exports = (function () {
     , _ = require('underscore') // list utility library
     , passport = require('passport')
     //, nodemailer = require('nodemailer')
-    , auth = require('./auth')
-    , User = require('./models/user')
+    //, auth = require('./auth')
+    //, User = require('./models/user')
     , db_config = require('./models/db.config')
     //, mailer = require('./mailer')
     , BoardGame = require('./models/board_game');
@@ -17,7 +17,7 @@ module.exports = (function () {
   };
   
   //These app.get functions will display their respective ejs page.
-  app.get('/account', ensureAuthenticated, function(req, res) {
+  /*app.get('/account', ensureAuthenticated, function(req, res) {
     var flash = req.flash('error');
     res.render('account', {
       title: 'Account',
@@ -44,7 +44,7 @@ module.exports = (function () {
       //Redirect to 'next' URL.
       res.redirect(next_page);
     }
-  });
+  });*/
   
   //this page is where you request the password recovery e-mail
   /*app.get('/password_recovery', function (req, res) {
@@ -72,7 +72,7 @@ module.exports = (function () {
     console.log('Password reset page loaded with username ' + username + ', recovery code ' + recovery_code + ', and e-mail ' + email + '.');
   });*/
 
-  app.get('/register', function(req, res) {
+  /*app.get('/register', function(req, res) {
     var next_page = req.query.next || base_page;
     if (! auth.isAuthenticated(req)) {
       var flash = req.flash('error');
@@ -88,7 +88,7 @@ module.exports = (function () {
       //Redirect to 'next' URL.
       res.redirect(next_page);
     }
-  });
+  });*/
 
   //this route handles e-mail verification links.
   /*app.get('/verify_email', function (req, res) {
@@ -113,13 +113,15 @@ module.exports = (function () {
   });*/
 
   function renderHome(req, res) {
-    var user = req.user
+    var metrics = req.session.metrics
       , render_args ={
           title: 'Meeple Huddle'
-        , user: user
-      };
-    if (user && _.isNumber(user.metrics.len)) {
-      user.getRecommendations(4, function(err, recommendations) {
+      }
+      , games = req.session.games
+      , excluded_games = [];
+    if (games) { excluded_games = games.liked.concat(games.disliked); }
+    if (metrics && _.isNumber(metrics.len)) {
+      BoardGame.getRecommendations(metrics, 4, excluded_games, function(err, recommendations) {
         if (err) { console.error('Error while getting recommendations:', err); }
         render_args.recommendations = recommendations;
         render();
@@ -141,22 +143,20 @@ module.exports = (function () {
       if (find_err) { return next(find_err); }
       res.render('games', {
         title: 'Board Game List'
-      , user: req.user
       , games: games
       });
     });
   });
 
-  app.get('/questionnaire', ensureAuthenticated, function(req, res) {
+  app.get('/questionnaire', function(req, res) {
     res.render('questionnaire', {
       title: 'Questionnaire'
-    , user: req.user
     });
   });
 
-  app.post('/answer/:value', ensureAuthenticated, function(req, res) {
+  app.post('/answer/:value', function(req, res) {
     var val = req.params.value
-      , metrics = req.user.metrics;
+      , metrics = req.session.metrics;
     console.log('/answer/:value called with', val);
     _.extend(metrics.internal, {
       aesthetic  : val
@@ -175,10 +175,6 @@ module.exports = (function () {
 
     metrics.len = BoardGame.calculateSumProduct(metrics);
     metrics.len = Math.sqrt(metrics.len);
-    req.user.save(function(save_err) {
-      if (save_err) { console.error(save_err); }
-      res.redirect(base_page);
-    });
   });
 
   var game_names_to_judge = [
@@ -199,7 +195,7 @@ module.exports = (function () {
   , 'Agricola'
   , 'Small World'
   ], games_to_judge;
-  app.get('/judge', ensureAuthenticated, function(req, res) {
+  app.get('/judge', function(req, res) {
     if (_.isEmpty(games_to_judge)) {
       BoardGame.find({ name: { $in: game_names_to_judge } }, function(find_err, games) {
         if (find_err) { console.error('Error while looking up games to judge:', find_err); }
@@ -213,33 +209,42 @@ module.exports = (function () {
     function render() {
       res.render('judge', {
         title: 'Do You Like These Games?'
-      , user: req.user
       , games: games_to_judge
       });
     }
   });
 
-  app.post('/submit_votes', ensureAuthenticated, function(req, res) {
-    console.log('submit_votes called with', req.body);
-    if (! _.isArray(req.body.liked)) { req.body.liked = []; }
-    if (! _.isArray(req.body.disliked)) { req.body.disliked = []; }
-    req.user.setMetricsFromGames(req.body, function(err) {
-      if (err) { console.error('setMetricsFromGames error:', err); }
+  app.post('/submit_votes', function(req, res) {
+    var games = req.body
+      , session = req.session;
+    console.log('submit_votes called with', games);
+    if (! _.isArray(games.liked)) { games.liked = []; }
+    if (! _.isArray(games.disliked)) { games.disliked = []; }
+    BoardGame.calculateMetricsFromGames(games, function(err, metrics) {
+      if (err) { console.error('calculateMetricsFromGames error:', err); }
+      session.games = games;
+      session.metrics = metrics;
       res.redirect(base_page);
     });
   });
 
-  app.get('/self_describe', ensureAuthenticated, function(req, res) {
+  app.get('/self_describe', function(req, res) {
+    if (_.isUndefined(req.session.metrics)) {
+      req.session.metrics = {
+        internal: {}
+      , external: {}
+      };
+    }
     res.render('self_describe', {
-      title: 'Describe Yourself'
-    , user: req.user
+      title: 'Describe Yourself',
+      old_metrics: req.session.metrics
     });
   });
 
-  app.post('/describe', ensureAuthenticated, function(req, res) {
+  app.post('/describe', function(req, res) {
     var args = req.body
-      , metrics = req.user.metrics;
-    console.log('/describe called with', args, metrics);
+      , metrics = req.session.metrics;
+    //console.log('/describe called with', args, metrics);
     _.extend(metrics.internal, {
       aesthetic  : args.aesthetic
     , challenge  : args.challenge
@@ -256,13 +261,14 @@ module.exports = (function () {
     });
     metrics.len = BoardGame.calculateSumProduct(metrics);
     metrics.len = Math.sqrt(metrics.len);
-    req.user.save(function(save_err) {
-      if (save_err) { console.error(save_err); }
-      res.redirect(base_page);
-    });
+
+    // clear liked/disliked games
+    delete req.session.games;
+
+    res.redirect(base_page);
   });
 
-  app.post('/set_email', ensureAuthenticated, function (req, res) {
+  /*app.post('/set_email', ensureAuthenticated, function (req, res) {
     var username = req.user.username
       , email = req.body.email;
 
@@ -296,7 +302,7 @@ module.exports = (function () {
       }
     });
     res.redirect('back');
-  });
+  });*/
 
 /*
   //submit password recovery to user's e-mail address route.
@@ -389,7 +395,7 @@ module.exports = (function () {
 */
 
   //remove email from account association
-  app.post('/remove_email', ensureAuthenticated, function (req, res) {
+  /*app.post('/remove_email', ensureAuthenticated, function (req, res) {
     console.log('calling remove email route');
     User.update({ _id: req.user._id }, { $unset: { email: undefined }, $set: { email_confirmed: false } }, function(err) {
       if (err) {
@@ -486,6 +492,14 @@ module.exports = (function () {
       }
       res.json(true);
     });
+  });*/
+
+  // destroy the current session, in order to treat the user as a new user
+  app.get('/logout', function (req, res) {
+    //console.log('GET /logout called!');
+    //End this user's session.
+    req.session.destroy();
+    res.redirect(base_page);
   });
 
   //Handle all other cases with a 404

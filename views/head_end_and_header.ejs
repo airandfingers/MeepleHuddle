@@ -35,29 +35,6 @@
                       <% }); %>
 
                       <li><a href="#"><b>Subscribe! <i class="icon-hand-up"></i></b></a></li>
-
-                      <!-- LOGOUT or SIGN UP dropdown Link -->
-                      <li class="right unselectable">
-                          <% if (locals.username) { %>
-                            <a id="logout_trigger"href="/logout">LOGOUT</a>
-                          <% }
-                          else { %>
-                            <a href="/register">SIGN UP</a>
-                          <% } %>
-                      </li>
-
-                      <!-- Account dropdown or LOGIN Link-->
-                      <li class="right unselectable">
-                          <% if (locals.username) { %>
-                            <a href="/account" title="My Account"
-                               <%= title === 'Account' ? 'class=current_page' : '' %>
-                            >
-                              <%= locals.username.toUpperCase() %> 
-                            </a>
-                          <% } else { %>
-                            <a href="/login">LOGIN</a>
-                          <% } %>
-                      </li>
                   </ul>
                 </div>
             </div>

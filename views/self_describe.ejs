@@ -3,16 +3,16 @@
         <h1>Describe your game preferences</h1>
         <%
         var metrics = [
-          { label: 'Aesthetics:', name: 'aesthetic', value: user.metrics.internal.aesthetic || 1 }
-        , { label: 'Challenge:', name: 'challenge', value: user.metrics.internal.challenge || 1 }
-        , { label: 'Pass Time:', name: 'pass_time', value: user.metrics.internal.pass_time || 1 }
-        , { label: 'Narrative:', name: 'narrative', value: user.metrics.internal.narrative || 1 }
-        , { label: 'Discovery:', name: 'discovery', value: user.metrics.internal.discovery || 1 }
-        , { label: 'Chance:', name: 'chance', value: user.metrics.internal.chance || 1 }
-        , { label: 'Confrontation:', name: 'confrontation', value: user.metrics.external.confrontation || 1 }
-        , { label: 'Manipulation:', name: 'manipulation', value: user.metrics.external.manipulation || 1 }
-        , { label: 'Accumulation:', name: 'accumulation', value: user.metrics.external.accumulation || 1 }
-        , { label: 'Teamwork:', name: 'teamwork', value: user.metrics.external.teamwork || 1 }
+          { label: 'Aesthetics:', name: 'aesthetic', value: old_metrics.internal.aesthetic || 1 }
+        , { label: 'Challenge:', name: 'challenge', value: old_metrics.internal.challenge || 1 }
+        , { label: 'Pass Time:', name: 'pass_time', value: old_metrics.internal.pass_time || 1 }
+        , { label: 'Narrative:', name: 'narrative', value: old_metrics.internal.narrative || 1 }
+        , { label: 'Discovery:', name: 'discovery', value: old_metrics.internal.discovery || 1 }
+        , { label: 'Chance:', name: 'chance', value: old_metrics.internal.chance || 1 }
+        , { label: 'Confrontation:', name: 'confrontation', value: old_metrics.external.confrontation || 1 }
+        , { label: 'Manipulation:', name: 'manipulation', value: old_metrics.external.manipulation || 1 }
+        , { label: 'Accumulation:', name: 'accumulation', value: old_metrics.external.accumulation || 1 }
+        , { label: 'Teamwork:', name: 'teamwork', value: old_metrics.external.teamwork || 1 }
         ]; %>
         <form id="metrics_form" action="/describe" method="post">
             <% metrics.forEach(function(metric_obj) { %>

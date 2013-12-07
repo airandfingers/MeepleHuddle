@@ -32,9 +32,9 @@ var express = require('express')
       store: db.session_store
     , secret: 'M33pl3Huddl3'
     , sid_name: 'express.sid'
-  };
+  }
 
-function start() {
+  , start = function() {
   module.exports = {
     app: app
   , server: server
@@ -58,11 +58,11 @@ function start() {
   })); //enable session use with these settings
   app.use(passport.initialize()); // Initialize Passport authentication module
   app.use(passport.session()); // Set up Passport session
-  app.use(function(req, res, next) {
+  /*app.use(function(req, res, next) {
     // Copy username from req.user into res.locals for use in views
     res.locals.username = req.user && req.user.username;
     next();
-  });
+  });*/
   app.use(flash()); // Necessary to display Passport "flash" messages
   app.use(app.router); // Match against routes in routes.js
 

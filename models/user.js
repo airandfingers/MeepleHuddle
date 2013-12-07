@@ -179,24 +179,7 @@ module.exports = (function() {
   UserSchema.methods.getRecommendations = function(num, cb) {
     var user = this;
     //console.log({ $nin: user.games.liked, $nin: user.games.disliked });
-    BoardGame.find(function(find_err, board_games) {
-      console.log('find returns', find_err, board_games);
-      if (find_err) { return cb(find_err); }
-      // wtf, iterating over full metrics obj doesn't work
-      var user_metrics = user.metrics
-        , board_game_metrics
-        , sum_product;
-      _.each(board_games, function(board_game) {
-        board_game_metrics = board_game.metrics;
-        sum_product = BoardGame.calculateSumProduct(user_metrics, board_game_metrics);
-        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.len, board_game_metrics.len);
-        board_game.similarity = sum_product / user_metrics.len / board_game_metrics.len;
-        //console.log(board_game.similarity);
-      });
-      board_games = _.sortBy(board_games, 'similarity');
-      //console.log('sorted board_games:', board_games);
-      cb(null, _.last(board_games, num).reverse());
-    });
+    BoardGame.getRecommendations(user.metrics, num, cb);
   };
 
   // set user's metrics based on games' metrics
@@ -277,24 +260,6 @@ module.exports = (function() {
       console.log('saving user:', user);
       user.save(cb);
     });
-
-    /*BoardGame.find(function(find_err, board_games) {
-      if (find_err) { return cb(find_err); }
-      // wtf, iterating over full metrics obj doesn't work
-      var user_metrics = user.metrics
-        , board_game_metrics
-        , sum_product;
-      _.each(board_games, function(board_game) {
-        board_game_metrics = board_game.metrics;
-        sum_product = BoardGame.calculateSumProduct(user_metrics, board_game_metrics);
-        //console.log('Setting', board_game.name, '\'s similarity', sum_product, user_metrics.len, board_game_metrics.len);
-        board_game.similarity = sum_product / user_metrics.len / board_game_metrics.len;
-        //console.log(board_game.similarity);
-      });
-      board_games = _.sortBy(board_games, 'similarity');
-      //console.log('sorted board_games:', board_games);
-      cb(null, _.last(board_games, num).reverse());
-    });*/
   };
 
   /* the model - a fancy constructor compiled from the schema:
