@@ -32,6 +32,7 @@ var express = require('express')
       store: db.session_store
     , secret: 'M33pl3Huddl3'
     , sid_name: 'express.sid'
+    , cookie: { maxAge: 31536000000 } // 365 days
   }
 
   , start = function() {
@@ -55,6 +56,7 @@ var express = require('express')
     store: session_settings.store, //where to store sessions
     secret: session_settings.secret, //seed used to randomize some aspect of sessions?
     key: session_settings.sid_name, //the name under which the session ID will be stored
+    cookie: session_settings.cookie // dictates how long the cookie will last
   })); //enable session use with these settings
   app.use(passport.initialize()); // Initialize Passport authentication module
   app.use(passport.session()); // Set up Passport session
