@@ -74,7 +74,7 @@ var express = require('express')
     app.use(express.errorHandler({
       dumpExceptions: true
     , showStack: true
-    })); 
+    }));
   });
 
   //Production-mode-specific middleware configuration

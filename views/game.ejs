@@ -1,0 +1,18 @@
+<% include head %>
+  <div id="container">
+    <h2><%= game.name %></h2>
+      <img src="/img/games/<%= game.file_name %>" alt="<%= game.name %>" />
+      <table class="table table-bordered" id="game_stats">
+        <% ['internal', 'external'].forEach(function(category) {
+             var catMetrics = game.metrics[category].toObject();
+             for (var type in catMetrics) { %>
+               <tr>
+                 <td><%= type %></td>
+                 <td><%= catMetrics[type] %></td>
+               </tr>
+          <% } %>
+        <% }); %>
+      </table>
+  </div> <!-- container -->
+  <% include plugins %>
+<% include foot %>

@@ -29,7 +29,9 @@
             </thead>
         <% games.forEach(function(game, i) { %>
             <tr>
-                <td><%= game.name || 'ERROR: NO NAME FOUND' %></td>
+                <td><% if (game.name) { %>
+                    <a href='/game?name=<%= game.name %>'><%= game.name %></a>
+                    <% } else { 'ERROR: NO NAME FOUND' } %></td>
                 <td><%= rangeOrVal(game.num_players) %></td>
                 <td><%= game.min_age || '-' %></td>
                 <td><%= rangeOrVal(game.setup_time) %></td>

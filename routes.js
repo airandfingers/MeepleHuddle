@@ -15,7 +15,7 @@ module.exports = (function () {
   var ensureAuthenticated = function(req, res, next) {
     auth.ensureAuthenticated(req, res, next);
   };
-  
+
   //These app.get functions will display their respective ejs page.
   /*app.get('/account', ensureAuthenticated, function(req, res) {
     var flash = req.flash('error');
@@ -45,7 +45,7 @@ module.exports = (function () {
       res.redirect(next_page);
     }
   });*/
-  
+
   //this page is where you request the password recovery e-mail
   /*app.get('/password_recovery', function (req, res) {
     res.render('password_recovery', {
@@ -144,6 +144,16 @@ module.exports = (function () {
       res.render('games', {
         title: 'Board Game List'
       , games: games
+      });
+    });
+  });
+
+  app.get('/game', function (req, res) {
+    BoardGame.findOne({name: req.query.name}, function(find_err, game) {
+      if (find_err) { return text(find_err); }
+      res.render('game', {
+        title: game.name
+      , game: game
       });
     });
   });
