@@ -150,7 +150,7 @@ module.exports = (function () {
 
   app.get('/game', function (req, res) {
     BoardGame.findOne({name: req.query.name}, function(find_err, game) {
-      if (find_err) { return text(find_err); }
+      if (find_err) { return next(find_err); }
       res.render('game', {
         title: game.name
       , game: game
